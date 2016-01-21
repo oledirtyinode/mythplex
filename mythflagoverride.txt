@@ -1,0 +1,5 @@
+CommDetectBlankCanHaveLogo=0
+CommDetectMaxCommBreakLength=240
+CommDetectMaxCommLength=125
+CommDetectMinCommBreakLength=75
+CommDetectMinShowLength=90
