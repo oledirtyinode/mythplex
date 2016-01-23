@@ -15,6 +15,8 @@
 #include <glib/glib.h>
 #include <string>
 
+GHashTable GetConfig(char *file[]);
+
 int main(int argc, char *argv[])
 {
    /* command line variables */
@@ -29,24 +31,39 @@ int main(int argc, char *argv[])
    /* configuration dictionary */
    GHashTable* config = g_hash_table_new(g_str_hash, g_str_equal);
 
-   if (!(g_key_file_load_from_file(config_file, "./postprocess.conf", G_KEY_FILE_NONE, error))
-   {
-     fprintf(stderr, "Cannot load config file! Exiting.", __FILE__);
-     exit(1);
-   }
-
-   /* Get the list of keys. */
-   char keys[][] = g_key_file_get_keys(config_file, "General", NULL, error);
-
-   /* Insert config file values into our config hash table. */
-   for (int k = 0; k < sizeof(keys); k++)
-   {
-     g_hash_table_insert(config, keys[k], g_key_file_get_string(config_file, "General", keys[k], error));
-   }
-
-   g_key_file_free(config_file); /* Release the keyfile and move on. */
+   config = GetConfig("./postprocess.conf");
 
    
 
    return 0;
+}
+
+GHashTable GetConfig(char *file[])
+{
+
+  GHashTable table = g_hash_table_new(g_str_hash, g_str_equal);
+
+  if (!(g_key_file_load_from_file(config_file, file, G_KEY_FILE_NONE, error)))
+  {
+    fprintf(stderr, "Cannot load config file! Exiting.", __FILE__);
+    exit(1);
+  }
+
+  char groups[][] = g_key_file_get_groups(config_files, NULL);
+
+  for (int lcv = 0; lcv < sizeof(groups); lcv++)
+  {
+    /* Get the list of keys. */
+    char keys[][] = g_key_file_get_keys(config_file, groups[lcv], NULL, error);
+
+    /* Insert config file values into our config hash table. */
+    for (int k = 0; k < sizeof(keys); k++)
+    {
+      g_hash_table_insert(table, keys[k], g_key_file_get_string(config_file, groups[lcv], keys[k], error));
+    }
+  }
+
+  g_key_file_free(config_file); /* Release the keyfile and move on. */
+
+  return table;
 }
