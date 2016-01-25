@@ -1,0 +1,18 @@
+#!/bin/bash
+
+FILES=/mnt/windows/*
+
+for f in $FILES
+do
+	SHOW=`echo $f | awk -F/ '{ print $4 }' | awk -F- '{ print $1 }' | rev | cut -c 2- | rev`
+	SEASON=`echo $f | awk -F/ '{ print $4 }' | awk -F- '{ print $2 }' | cut -c 3- | awk -Fe '{ print $1 }';`
+
+	mkdir -p "/mediasrv/plex/tv/recorded/$SHOW/Season $SEASON"
+
+	rsync -v --ignore-existing --progress "$f" "/mediasrv/plex/tv/recorded/$SHOW/Season $SEASON/"
+
+done
+
+find /mediasrv/plex/tv/recorded \! -user plex -exec chown plex {} \;
+find /mediasrv/plex/tv/recorded \! -group media -exec chgrp media {} \;
+find /mediasrv/plex/tv/recorded -type f \! -perm 644 -exec chmod 644 {} \;
