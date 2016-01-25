@@ -1,0 +1,8 @@
+#!/bin/bash
+
+#ls -l | grep -v 'plex.*media' | xargs -I {} chown plex:media {};chmod 644 {}
+rsync -v --ignore-existing --progress /mnt/windows/*.mkv /mediasrv/plex/movies
+
+find /mediasrv/plex/movies \! -user plex -exec chown plex {} \;
+find /mediasrv/plex/movies \! -group media -exec chgrp media {} \;
+find /mediasrv/plex/movies -type f \! -perm 644 -exec chmod 644 {} \;
