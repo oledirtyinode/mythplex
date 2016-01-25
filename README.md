@@ -9,4 +9,11 @@ option to facilitate long term archival.
 These scripts currently require BASH, and haven't been sanitized for other environments. Some configuration is required for
 your environment.
 
-# Include installation instructions here!
+### Installing
+
+1. Copy the scripts into a directory that is readable by the MythTV user.
+2. In your MythTV setup, create a user job that points to the mythpostprocess.sh script, with the command line arguments of "%CHANID%" "%STARTTIMEUTC%". It should look something like this:
+
+/path/to/scripts/mythpostprocess.sh "%CHANID%" "%STARTTIMEUTC%"
+
+3. Test.
