@@ -10,10 +10,11 @@
    viewing.
 */
 
-#include <stdlib>
-#include <stdio>
+#include <stdlib.h>
+#include <stdio.h>
 #include <glib/glib.h>
-#include <string>
+#include <string.h>
+#include <unistd.h> /* for execlp */
 
 GHashTable GetConfig(char *file[]);
 
@@ -33,7 +34,18 @@ int main(int argc, char *argv[])
 
    config = GetConfig("./postprocess.conf");
 
-   
+   /* Read the MythTV config and get the username and password for the MythTV
+      database. */
+
+  /* Retrieve info about the recorded program from the Myth database. */
+
+  /* Run mythcommflag */
+
+  /* Cut the commercials */
+
+  /* run ffmpeg */
+
+  /* Create symlink in the PMS directory */
 
    return 0;
 }
