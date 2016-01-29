@@ -9,8 +9,8 @@ only be not recommended, but actively discouraged.
 
 ## Installation
 
-This program requires GLib 2.0 or better. Also required is gcc (I think) and a
-reasonably recent version of glibc.
+This program requires GLib 2.0 or better. Also required is gcc (I think) and 
+reasonably recent versions of glibc and libmysql-dev.
 
 1. Compile the program and place in a directory that is readable by the MythTV
    user.
