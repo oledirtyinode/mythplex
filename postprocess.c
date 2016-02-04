@@ -15,14 +15,33 @@
 #include <glib/glib.h>
 #include <string.h>
 #include <unistd.h> /* for execlp */
+#include <mysql.h> /* for talking to the MythTV DB */
+
+struct show_info {
+  char title[];
+  char subtitle[];
+  char date[];
+  char filename[];
+  char storagegroup[];
+  char dirname[];
+  int season;
+  int episode;
+  char type[];
+  char airdate[];
+}
 
 GHashTable GetConfig(char *file[]);
+
+int GetShowInfo(GHashTable hashtable, MYSQL conn, struct show_info info);
 
 int main(int argc, char *argv[])
 {
    /* command line variables */
-   char[] chanid;
-   char[] starttime;
+   char[] chanid = argv[1];
+   char[] starttime = argv[2];
+
+   struct show_info recorded_show;
+   struct *showptr = &recorded_show;
 
    GError error;
 
@@ -34,10 +53,18 @@ int main(int argc, char *argv[])
 
    config = GetConfig("./postprocess.conf");
 
-   /* Read the MythTV config and get the username and password for the MythTV
-      database. */
+  /* Connect to MythTV DB and retrieve show information. */
+  MYSQL *conn;
+  MYSQL_RES *res;
+  MYSQL_ROW row;
 
-  /* Retrieve info about the recorded program from the Myth database. */
+  conn = mysql_init(NULL);
+
+  if (!mysql_real_connect(conn, config["DBSERVER"], config["DBUSER"], config["DBPASS"], config["DATABASE"], 0, NULL, 0))
+  {
+    fprintf(stderr, "%s\n", mysql_error(conn));
+    exit(1);
+  }
 
   /* Run mythcommflag */
 
@@ -78,4 +105,11 @@ GHashTable GetConfig(char *file[])
   g_key_file_free(config_file); /* Release the keyfile and move on. */
 
   return table;
+}
+
+int GetShowInfo(GHashTable hashtable, MYSQL dbconn, struct show_info info)
+{
+  struct show_info show;
+
+  return show;
 }
