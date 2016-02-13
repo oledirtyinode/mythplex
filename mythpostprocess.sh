@@ -77,7 +77,7 @@ fi
 PRETTYFILEPATH="$PRETTYSUBDIR$PRETTYNAME"
 
 # Flag commercials
-mythcommflag --chanid "$CHANID" --override-settings-file /mediasrv/plex/scripts/mythflagoverride.txt --starttime "$STARTTIME"
+mythcommflag --chanid "$CHANID" --method 3 --override-settings-file /mediasrv/plex/scripts/mythflagoverride.txt --starttime "$STARTTIME"
 # Generate a cut list
 mythutil --gencutlist --chanid "$CHANID" --starttime "$STARTTIME"
 # Remove commercials from mpeg file
