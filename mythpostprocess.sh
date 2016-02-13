@@ -50,20 +50,16 @@ EPISODE=$(mysql mythconverg --user=$DBUSER --password=$DBPASS -se "SELECT episod
 TYPE=$(mysql mythconverg --user=$DBUSER --password=$DBPASS -se "SELECT category_type FROM recordedprogram WHERE chanid=\"$CHANID\" AND starttime=\"$STARTTIME\";")
 AIRDATE=$(mysql mythconverg --user=$DBUSER --password=$DBPASS -se "SELECT originalairdate FROM recordedprogram WHERE chanid=\"$CHANID\" AND starttime=\"$STARTTIME\";")
 
-echo "DIRNAMELIST is ${DIRNAMELIST}"
-
 if [ $(echo $DIRNAMELIST | wc -w) -gt 1 ]; then # If there is more than one directory in the storage group.
 	for i in $DIRNAMELIST;
 	do
-		if [ -f $i$FILENAME ]; then
+		if [ -f $i$FILENAME ]; then # Find where our recorded show is stored among the directories and set that to DIRNAME.
 			DIRNAME=$i
 		fi
 	done
 else # Otherwise
-	DIRNAME=$DIRNAMELIST
+	DIRNAME=$DIRNAMELIST # There's only one directory, and this is otherwise a simple task.
 fi
-
-echo "DIRNAME is ${DIRNAME}"
 
 FILEPATH="$DIRNAME$FILENAME"
 NEWNAME=$(echo ${CHANID}_${STARTTIME}).mkv
@@ -73,7 +69,7 @@ if [[ $TYPE == "movie" ]]; then
 	PRETTYSUBDIR="$PRETTYMOVIEDIRNAME/$TITLE/"
 elif [[ $TYPE == "sports" ]]; then
 	PRETTYNAME="$TITLE - $AIRDATE.mkv"
-	PRETTYSUBDIR="$PRETTYTVDIRNAME/$TITLE/Season 0/"
+	PRETTYSUBDIR="$PRETTYTVDIRNAME/$TITLE/Season 0/" # I personally place recorded sports programs into a "Season 0" folder. You may do something different. This is where to change that.
 else # if this isn't a movie or a sports show, it's either a "series" or a "tvshow" and we treat those the same.
         PRETTYNAME="$TITLE - s$SEASON""e$EPISODE - $SUBTITLE.mkv"
         PRETTYSUBDIR="$PRETTYTVDIRNAME$TITLE/Season $SEASON/"
@@ -98,8 +94,10 @@ ffmpeg -i $FILEPATH -c:v libx264 -preset $PRESET -crf $CRF -c:a copy -c:s copy -
 mv "$FILEPATH".png "$NEWFILEPATH".png
 
 # Update the file metadata to point to our newly cut and transcoded file.
-NEWFILESIZE=`du -b "$NEWFILEPATH" | cut -f1`
-mysql mythconverg --user=$DBUSER --password=$DBPASS -se "UPDATE recorded SET basename=\"$NEWNAME\",filesize=\"$NEWFILESIZE\",transcoded=\"1\" WHERE chanid=\"$CHANID\" AND starttime=\"$STARTTIME\";"
+if [ -f $NEWFILEPATH ]; then # We only perform this step if ffmpeg actually wrote out a file. This prevents us from losing track of the recorded program in the MythDB.
+	NEWFILESIZE=`du -b "$NEWFILEPATH" | cut -f1`
+	mysql mythconverg --user=$DBUSER --password=$DBPASS -se "UPDATE recorded SET basename=\"$NEWNAME\",filesize=\"$NEWFILESIZE\",transcoded=\"1\" WHERE chanid=\"$CHANID\" AND starttime=\"$STARTTIME\";"
+fi
 
 # Delete the now useless files
 rm "$FILEPATH"
