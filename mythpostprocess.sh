@@ -88,7 +88,7 @@ mysql mythconverg --user=$DBUSER --password=$DBPASS -se "DELETE FROM recordedmar
 mysql mythconverg --user=$DBUSER --password=$DBPASS -se "DELETE FROM recordedseek WHERE chanid=\"$CHANID\" AND starttime=\"$STARTTIME\";"
 
 # Convert cut video to H264, preserving audio (and subtitles where supported.)
-ffmpeg -i $FILEPATH -c:v libx264 -preset $PRESET -crf $CRF -c:a copy -c:s copy -threads $THREADS -f matroska "$NEWFILEPATH"
+ffmpeg -i $FILEPATH -c:v libx264 -preset $PRESET -crf $CRF -c:a copy -c:s copy -threads $THREADS -vf yadif -f matroska "$NEWFILEPATH"
 
 # Rename intro shot to match our new file
 mv "$FILEPATH".png "$NEWFILEPATH".png
