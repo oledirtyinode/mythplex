@@ -18,7 +18,7 @@
 PRETTYTVDIRNAME="/mediasrv/plex/tv/recorded/"
 PRETTYMOVIEDIRNAME="/mediasrv/plex/movies/"
 # Set this to the URL prefix of your Plex Media Server. Only needed if you want to notify Plex to refresh the library.
-PMSURL="http://192.168.1.105:32400/"
+PMSURL="http://127.0.0.1:32400/"
 # Set this to the section number of your recorded TV shows library. To find this out, go to your plex media server and navigate to the desired library. Look at the URL for that page, and at the end you should see /section/<number>. The number here is your section number.
 PMSSEC="2"
 # Number of threads to use for encoding. 0 uses all.
@@ -100,8 +100,8 @@ if [ -f $NEWFILEPATH ]; then # We only perform this step if ffmpeg actually wrot
 fi
 
 # Delete the now useless files
-rm "$FILEPATH"
-rm "$FILEPATH".tmp
+#rm "$FILEPATH"
+#rm "$FILEPATH".tmp
 
 # create pretty name and path for file
 mkdir -p "$PRETTYSUBDIR"
